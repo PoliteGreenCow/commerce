@@ -1,32 +1,62 @@
-import { Container, Nav , Navbar} from 'react-bootstrap';
+import React, { useContext, useEffect } from 'react';
+import { Container, Nav, Navbar, Button } from 'react-bootstrap'; // Import Button
 import { Outlet } from 'react-router-dom';
+import logo from "../public/images/logo.png"; // Make sure the path to the logo is correct
+import { Store } from './Store';
 
+const App = () => {
+  const {
+    state: { mode },
+    dispatch,
+  } = useContext(Store);
 
-function App() {
+  useEffect(() => {
+    document.body.setAttribute('data-bs-theme', mode);
+  }, [mode]);
+
+  const switchModeHandler = () => {
+    dispatch({ type: 'SWITCH_MODE' });
+  };
 
   return (
     <div className='d-flex flex-column vh-100'>
       <header>
-        <Navbar bg ="dark" variant='dark' expand='lg'>
+        <Navbar expand='lg'>
           <Container>
-            <Navbar.Brand>ts-ecommerce</Navbar.Brand>
+            <Navbar.Brand href="/">
+              <img 
+                src={logo} 
+                alt="Shoppy Logo" 
+                height="45" 
+                className="d-inline-block align-top me-2"
+              />
+              Shoppy
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="ms-auto">
+                <Button variant={mode} onClick={switchModeHandler}>
+                  <i className={mode === 'light' ? 'fa fa-sun' : 'fa fa-moon'}></i>
+                </Button>
+                <Nav.Link href="/cart">Cart</Nav.Link>
+                <Nav.Link href="/signin">Sign In</Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
           </Container>
-          <Nav>
-            <a href="/cart" className='nav-link'>Cart</a>
-            <a href="/signin" className='nav-link'> SignIn</a>
-          </Nav>
         </Navbar>
       </header>
-      <main>
+      <main className="flex-grow-1">
         <Container className='mt-3'>
-          <Outlet/>
-        </Container>        
+          <Outlet />
+        </Container>
       </main>
-      <footer>
-        <div className='text-center'>
-        All rights reserved
-        </div>
-        </footer>
+      <footer className="py-3 bg-light">
+        <Container>
+          <div className='text-center'>
+            All rights reserved
+          </div>
+        </Container>
+      </footer>
     </div>
   );
 }

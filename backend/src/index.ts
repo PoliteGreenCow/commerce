@@ -1,6 +1,23 @@
 import cors from 'cors'
-import express, { Request, Response } from 'express'
-import { sampleProducts } from '../data'
+import dotenv from 'dotenv'
+import express from 'express'
+import mongoose from 'mongoose'
+import { productRouter } from './routers/productRouter'
+import { seedRouter } from './routers/SeedRouter'
+
+dotenv.config()
+
+const MONGODB_URI =
+  process.env.MONGODB_URI || 'mongodb://localhost/commerce'
+  mongoose.set('strictQuery', true)
+  mongoose
+    .connect(MONGODB_URI)
+    .then(() => {
+      console.log('connected to mongodb')
+    })
+    .catch(() => {
+      console.log('error mongodb')
+    })
 
 const app = express()
 app.use(
@@ -10,9 +27,9 @@ app.use(
   })
 )
 
-app.get('/api/products', (req: Request, res: Response) => {
-  res.json(sampleProducts)
-})
+app.use('/api/products', productRouter)
+app.use('/api/seed', seedRouter)
+
 const PORT = 4000
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`)
