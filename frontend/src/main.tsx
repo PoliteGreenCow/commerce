@@ -16,12 +16,16 @@ import './index.css'
 import HomePage from './pages/Homepage'
 import ProductPage from './pages/Productpage'
 import { StoreProvider } from './Store'
+import SigninPage from './pages/SigninPage'
+import CartPage from './pages/CartPage'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index={true} element={<HomePage />} />
       <Route path="product/:slug" element={<ProductPage />} />
+      <Route path="cart" element={<CartPage />} />
+      <Route path="signin" element={<SigninPage />} />
       {/* <Route path="dashboard" element={<Dashboard />} /> */}
       {/* ... etc. */}
     </Route>

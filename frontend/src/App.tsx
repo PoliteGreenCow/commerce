@@ -1,5 +1,12 @@
 import { useContext, useEffect } from 'react';
-import { Container, Nav, Navbar, Button, Badge } from 'react-bootstrap';
+import {
+  Badge,
+  Button,
+  Container,
+  Nav,
+  Navbar,
+  NavDropdown,
+} from 'react-bootstrap'
 import { Outlet, Link } from 'react-router-dom';
 import CartImg from '../public/images/cart_icon.png';
 import logo from '../public/images/logo.png';
@@ -10,7 +17,7 @@ import { Store } from './Store';
 
 const App = () => {
   const {
-    state: { mode, cart },
+    state: { mode, cart, userInfo },
     dispatch,
   } = useContext(Store);
 
@@ -21,6 +28,14 @@ const App = () => {
   const switchModeHandler = () => {
     dispatch({ type: 'SWITCH_MODE' });
   };
+  const signoutHandler = () => {
+    dispatch({ type: 'USER_SIGNOUT' })
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem('cartItems')
+    localStorage.removeItem('shippingAddress')
+    localStorage.removeItem('paymentMethod')
+    window.location.href = '/signin'
+  }
 
   return (
     <div className="d-flex flex-column vh-100">
@@ -53,7 +68,21 @@ const App = () => {
                     </Badge>
                   )}
                 </Nav.Link>
-                <Nav.Link as={Link} to="/signin">Sign In</Nav.Link>
+                {userInfo ? (
+              <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
+                <Link
+                  className="dropdown-item"
+                  to="#signout"
+                  onClick={signoutHandler}
+                >
+                  Sign Out
+                </Link>
+              </NavDropdown>
+            ) : (
+              <Link className="nav-link" to="/signin">
+                Sign In
+              </Link>
+            )}
               </Nav>
             </Navbar.Collapse>
           </Container>

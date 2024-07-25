@@ -4,20 +4,26 @@ import express from 'express'
 import mongoose from 'mongoose'
 import { productRouter } from './routers/productRouter'
 import { seedRouter } from './routers/SeedRouter'
+import { userRouter } from './routers/userRouter'
 
 dotenv.config()
 
-const MONGODB_URI =
+const MONGODB_URI = 
   process.env.MONGODB_URI || 'mongodb://localhost/commerce'
-  mongoose.set('strictQuery', true)
-  mongoose
-    .connect(MONGODB_URI)
-    .then(() => {
-      console.log('connected to mongodb')
-    })
-    .catch(() => {
-      console.log('error mongodb')
-    })
+
+mongoose.set('strictQuery', true)
+
+
+mongoose.set('bufferTimeoutMS', 600000)
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to mongodb')
+  })
+  .catch(() => {
+    console.log('error mongodb')
+  })
 
 const app = express()
 app.use(
@@ -26,8 +32,11 @@ app.use(
     origin: ['http://localhost:5173'],
   })
 )
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 
 app.use('/api/products', productRouter)
+app.use('/api/users', userRouter)
 app.use('/api/seed', seedRouter)
 
 const PORT = 4000
