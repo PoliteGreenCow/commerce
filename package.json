@@ -8,6 +8,9 @@
     "start": "cross-env TG_ALLOW_MIXED=ALLOW  node backend/build/index.js",
           "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "devDependencies": {
+  "cross-env": "^7.0.3"
+},
   "keywords": [],
   "author": "",
   "license": "ISC"
