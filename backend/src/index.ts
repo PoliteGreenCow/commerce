@@ -2,6 +2,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import mongoose from 'mongoose'
+import { keyRouter } from './routers/keyRouters'
 import { productRouter } from './routers/productRouter'
 import { orderRouter } from './routers/orderRouter'
 import { seedRouter } from './routers/SeedRouter'
@@ -40,6 +41,7 @@ app.use('/api/products', productRouter)
 app.use('/api/users', userRouter)
 app.use('/api/orders', orderRouter)
 app.use('/api/seed', seedRouter)
+app.use('/api/keys', keyRouter)
 
 const PORT = 4000
 app.listen(PORT, () => {
