@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Button, Table } from 'react-bootstrap';
 import { Helmet } from 'react-helmet-async';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -11,7 +11,7 @@ import { User } from '../types/User';
 
 export default function AdminUsers() {
   const { data: users, isLoading, error, refetch } = useGetUsersQuery();
-  const { mutateAsync: deleteUser, isLoading: isDeleting } = useDeleteUserMutation();
+  const { mutateAsync: deleteUser } = useDeleteUserMutation();
 
   const deleteHandler = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
@@ -33,7 +33,7 @@ export default function AdminUsers() {
       {isLoading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (
-        <MessageBox variant="danger">{getError(error as ApiError)}</MessageBox>
+        <MessageBox variant="danger">{getError(error as unknown as ApiError)}</MessageBox>
       ) : (
         <Table striped bordered hover responsive>
           <thead>
