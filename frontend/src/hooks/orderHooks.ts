@@ -28,6 +28,14 @@ export const useGetOrderDetailsQuery = (id: string) =>
         ).data,
     })
 
+    
+    export const useGetOrderHistoryQuery = () =>
+      useQuery({
+        queryKey: ['order-history'],
+        queryFn: async () =>
+          (await apiClient.get<Order[]>(`/api/orders/mine`)).data,
+      })
+
 
 export const useCreateOrderMutation = () =>
   useMutation({

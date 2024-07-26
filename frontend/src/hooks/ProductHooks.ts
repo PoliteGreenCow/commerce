@@ -17,3 +17,17 @@ export const useGetProductsQuery = () =>
         queryFn: async () =>
           (await apiClient.get<Product>(`api/products/slug/${slug}`)).data,
       })
+      export const useGetCategoriesQuery = () =>
+        useQuery({
+          queryKey: ['categories'],
+          queryFn: async () =>
+            (await apiClient.get<string[]>(`/api/products/categories`)).data,
+        })
+      
+      export const useSearchProductsQuery = (query: string) =>
+        useQuery({
+          queryKey: ['search', query],
+          queryFn: async () =>
+            (await apiClient.get<Product[]>(`/api/products/search?query=${query}`))
+              .data,
+        })
