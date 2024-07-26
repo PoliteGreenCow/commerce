@@ -3,10 +3,12 @@ import apiClient from '../apiClient'
 import { CartItem, ShippingAddress } from '../types/Cart'
 import { Order } from '../types/Order'
 
+// Existing hooks...
+
 export const useGetOrderDetailsQuery = (id: string) =>
   useQuery({
     queryKey: ['orders', id],
-    queryFn: async () => 
+    queryFn: async () =>
       (await apiClient.get<Order>(`api/orders/${id}`)).data,
   })
 
@@ -53,3 +55,23 @@ export const useCreateOrderMutation = () =>
         )
       ).data,
   })
+
+// New feature: Order Summary Query
+type OrderSummary = {
+  users: { numUsers: number }[]
+  orders: { numOrders: number; totalSales: number }[]
+  dailyOrders: { _id: string; sales: number }[]
+  productCategories: { _id: string; count: number }[]
+}
+
+export const useGetOrderSummaryQuery = () =>
+  useQuery({
+    queryKey: ['order-summary'],
+    queryFn: async () =>
+      (await apiClient.get<OrderSummary>(`/api/orders/summary`)).data,
+  })
+  export const useGetOrdersQuery = () =>
+    useQuery({
+      queryKey: ['orders'],
+      queryFn: async () => (await apiClient.get<Order[]>('/api/orders')).data,
+    });
