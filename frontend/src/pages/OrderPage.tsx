@@ -3,105 +3,101 @@ import {
   PayPalButtonsComponentProps,
   SCRIPT_LOADING_STATE,
   usePayPalScriptReducer,
-} from '@paypal/react-paypal-js'
-import { useContext, useEffect } from 'react'
-import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap'
-import { Helmet } from 'react-helmet-async'
-import { Link, useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import LoadingBox from '../components/LoadingBox'
-import MessageBox from '../components/MessageBox'
+  DISPATCH_ACTION,
+} from '@paypal/react-paypal-js';
+import { useContext, useEffect } from 'react';
+import { Card, Col, ListGroup, Row } from 'react-bootstrap'; // Removed Button
+import { Helmet } from 'react-helmet-async';
+import { Link, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 import {
   useGetOrderDetailsQuery,
   useGetPaypalClientIdQuery,
   usePayOrderMutation,
-} from '../hooks/orderHooks'
-import { Store } from '../Store'
-import { ApiError } from '../types/ApiError'
-import { getError } from '../utils'
+} from '../hooks/orderHooks';
+import { Store } from '../Store';
+import { ApiError } from '../types/ApiError';
+import { getError } from '../utils';
 
 export default function OrderPage() {
-  const { state } = useContext(Store)
-   const { userInfo } = state
+    const { state: _state } = useContext(Store);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { userInfo: _userInfo } = _state;
 
-  const params = useParams()
-  const { id: orderId } = params
+  const params = useParams();
+  const { id: orderId } = params;
 
   const {
     data: order,
     isLoading,
     error,
     refetch,
-  } = useGetOrderDetailsQuery(orderId!)
+  } = useGetOrderDetailsQuery(orderId!);
 
-  const { mutateAsync: payOrder, isLoading: loadingPay } = usePayOrderMutation()
+  const { mutateAsync: payOrder } = usePayOrderMutation();
 
-  const testPayHandler = async () => {
-    await payOrder({ orderId: orderId! })
-    refetch()
-    toast.success('Order is paid')
-  }
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer(); // Removed isRejected
 
-  const [{ isPending, isRejected }, paypalDispatch] = usePayPalScriptReducer()
-
-  const { data: paypalConfig } = useGetPaypalClientIdQuery()
+  const { data: paypalConfig } = useGetPaypalClientIdQuery();
 
   useEffect(() => {
     if (paypalConfig && paypalConfig.clientId) {
       const loadPaypalScript = async () => {
         paypalDispatch({
-          type: 'resetOptions',
+          type: DISPATCH_ACTION.RESET_OPTIONS,
           value: {
-            'client-id': paypalConfig!.clientId,
+            clientId: paypalConfig.clientId,
             currency: 'USD',
           },
-        })
+        });
         paypalDispatch({
-          type: 'setLoadingStatus',
+          type: DISPATCH_ACTION.LOADING_STATUS,
           value: SCRIPT_LOADING_STATE.PENDING,
-        })
-      }
-      loadPaypalScript()
+        });
+      };
+      loadPaypalScript();
     }
-  }, [paypalConfig])
+  }, [paypalConfig, paypalDispatch]);
 
   const paypalbuttonTransactionProps: PayPalButtonsComponentProps = {
     style: { layout: 'vertical' },
-    createOrder(data, actions) {
-      return actions.order
-        .create({
-          purchase_units: [
-            {
-              amount: {
-                value: order!.totalPrice.toString(),
-              },
+    createOrder(_data, actions) {
+      return actions.order.create({
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            amount: {
+              currency_code: 'USD',
+              value: order!.totalPrice.toString(),
             },
-          ],
-        })
-        .then((orderID: string) => {
-          return orderID
-        })
+          },
+        ],
+      }).then((orderID: string) => {
+        return orderID;
+      });
     },
-    onApprove(data, actions) {
+    onApprove(_data, actions) {
       return actions.order!.capture().then(async (details) => {
         try {
-          await payOrder({ orderId: orderId!, ...details })
-          refetch()
-          toast.success('Order is paid successfully')
+          await payOrder({ orderId: orderId!, ...details });
+          refetch();
+          toast.success('Order is paid successfully');
         } catch (err) {
-          toast.error(getError(err as ApiError))
+          toast.error(getError(err as ApiError));
         }
-      })
+      });
     },
     onError: (err) => {
-      toast.error(getError(err as ApiError))
+      toast.error(getError(err as ApiError));
     },
-  }
+  };
 
   return isLoading ? (
     <LoadingBox></LoadingBox>
   ) : error ? (
-    <MessageBox variant="danger">{getError(error as ApiError)}</MessageBox>
+    <MessageBox variant="danger">{getError(error as unknown as ApiError)}</MessageBox>
   ) : !order ? (
     <MessageBox variant="danger">Order Not Found</MessageBox>
   ) : (
@@ -118,8 +114,8 @@ export default function OrderPage() {
               <Card.Text>
                 <strong>Name:</strong> {order.shippingAddress.fullName} <br />
                 <strong>Address: </strong> {order.shippingAddress.address},
-                {order.shippingAddress.city}, {order.shippingAddress.postalCode}
-                ,{order.shippingAddress.country}
+                {order.shippingAddress.city}, {order.shippingAddress.postalCode},
+                {order.shippingAddress.country}
               </Card.Text>
               {order.isDelivered ? (
                 <MessageBox variant="success">
@@ -209,20 +205,10 @@ export default function OrderPage() {
                 {!order.isPaid && (
                   <ListGroup.Item>
                     {isPending ? (
-                      <LoadingBox />
-                    ) : isRejected ? (
-                      <MessageBox variant="danger">
-                        Error in connecting to PayPal
-                      </MessageBox>
+                      <LoadingBox></LoadingBox>
                     ) : (
-                      <div>
-                        <PayPalButtons
-                          {...paypalbuttonTransactionProps}
-                        ></PayPalButtons>
-                        <Button onClick={testPayHandler}>Test Pay</Button>
-                      </div>
+                      <PayPalButtons {...paypalbuttonTransactionProps} />
                     )}
-                    {loadingPay && <LoadingBox></LoadingBox>}
                   </ListGroup.Item>
                 )}
               </ListGroup>
@@ -231,5 +217,5 @@ export default function OrderPage() {
         </Col>
       </Row>
     </div>
-  )
+  );
 }

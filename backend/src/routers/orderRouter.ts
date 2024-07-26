@@ -9,7 +9,7 @@ orderRouter.get(
   '/mine',
   isAuth,
   asyncHandler(async (req: Request, res: Response) => {
-    const orders = await OrderModel.find({ user: req.user._id })
+    const orders = await OrderModel.find({ user: req.user?._id })
     res.json(orders)
   })
 )
@@ -46,7 +46,7 @@ orderRouter.post(
         shippingPrice: req.body.shippingPrice,
         taxPrice: req.body.taxPrice,
         totalPrice: req.body.totalPrice,
-        user: req.user._id,
+        user: req.user?._id,
       } as Order)
       res.status(201).json({ message: 'Order Created', order: createdOrder })
     }

@@ -14,7 +14,7 @@ export default function PlaceOrderPage() {
   const navigate = useNavigate()
 
   const { state, dispatch } = useContext(Store)
-  const { cart, userInfo } = state
+  const { cart } = state
 
   const round2 = (num: number) => Math.round(num * 100 + Number.EPSILON) / 100 // 123.2345 => 123.23
 
@@ -25,7 +25,7 @@ export default function PlaceOrderPage() {
   cart.taxPrice = round2(0.15 * cart.itemsPrice)
   cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice
 
-  const { mutateAsync: createOrder, isLoading } = useCreateOrderMutation()
+  const { mutateAsync: createOrder } = useCreateOrderMutation()
 
   const placeOrderHandler = async () => {
     try {
@@ -149,11 +149,11 @@ export default function PlaceOrderPage() {
                     <Button
                       type="button"
                       onClick={placeOrderHandler}
-                      disabled={cart.cartItems.length === 0 || isLoading}
+                      disabled={cart.cartItems.length === 0 }
                     >
                       Place Order
                     </Button>
-                    {isLoading && <LoadingBox></LoadingBox>}
+                    { <LoadingBox></LoadingBox>}
                   </div>
                 </ListGroup.Item>
               </ListGroup>

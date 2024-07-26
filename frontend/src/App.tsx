@@ -1,11 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import {
-  Badge,
   Button,
   Container,
-  Form,
-  FormControl,
-  InputGroup,
   ListGroup,
   Nav,
   Navbar,
@@ -200,7 +196,7 @@ function App() {
             <LoadingBox />
           ) : error ? (
             <MessageBox variant="danger">
-              {getError(error as ApiError)}
+              {getError(error as unknown as ApiError)}
             </MessageBox>
           ) : (
             categories!.map((category) => (

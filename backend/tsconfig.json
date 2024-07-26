@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "outDir": "./build",
-    "strict": true,
+    "target": "es2016",
     "module": "commonjs",
-    "esModuleInterop": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
-  }
+    "emitDecoratorMetadata": true,
+    "outDir": "./dist",
+    "rootDir": "./src", 
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "include": ["src/**/*"]
 }

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
@@ -14,7 +13,7 @@ export default function HomePage() {
   return isLoading ? (
     <LoadingBox />
   ) : error ? (
-    <MessageBox variant="danger">{getError(error as ApiError)}</MessageBox>
+    <MessageBox variant="danger">{getError(error as unknown as ApiError)}</MessageBox>
   ) : (
     <Row>
       <Helmet>
