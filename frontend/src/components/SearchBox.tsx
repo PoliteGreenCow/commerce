@@ -8,9 +8,8 @@ export default function SearchBox() {
 
   const submitHandler = (e: React.SyntheticEvent) => {
     e.preventDefault()
-    navigate(query ? `/search/?query=${query}` : '/search')
+    navigate(query ? `/search?query=${query}` : '/search')
   }
-
   return (
     <Form className="flex-grow-1 d-flex me-auto" onSubmit={submitHandler}>
       <InputGroup>
@@ -18,11 +17,11 @@ export default function SearchBox() {
           type="text"
           name="q"
           id="q"
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search products..."
-          aria-label="Search products"
+          placeholder="Search Shoppy"
+          aria-label="Search Shoppy"
           aria-describedby="button-search"
-        />
+          onChange={(e) => setQuery(e.target.value)}
+        ></FormControl>
         <Button variant="outline-primary" type="submit" id="button-search">
           <i className="fas fa-search"></i>
         </Button>
