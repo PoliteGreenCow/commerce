@@ -122,3 +122,11 @@ a.header-link:hover,
 button.side-navbar-user:hover {
   color: white;
 }
+.cart-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 50%;
+}
